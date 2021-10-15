@@ -1,0 +1,9 @@
+# Environment
+venv
+
+# IDE
+.vscode
+.idea
+
+# PyTest
+.pytest_cache
