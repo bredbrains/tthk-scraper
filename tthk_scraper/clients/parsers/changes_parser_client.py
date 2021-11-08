@@ -1,32 +1,21 @@
 from datetime import datetime
 from typing import Optional, List
 
-from bs4 import ResultSet
+from bs4 import ResultSet, BeautifulSoup
 
 from tthk_scraper.clients.parsers.base_parser_client import BaseParserClient
 from tthk_scraper.models.change import Change
-from tthk_scraper.utils.blueprints import CHANGES, ChangeCell
-from tthk_scraper.utils.urls import URLS
+from tthk_scraper.utils.blueprints import ChangeCell
 
 
 class ChangesParserClient(BaseParserClient):
-    def __init__(self):
-        url = URLS.get(CHANGES)
-        super().__init__(url)
+    def __init__(self, document: BeautifulSoup):
+        self.document = document
 
     def parse(self) -> List[Change]:
-        document = self.open_page()
-        tables = self.parse_tables(document)
+        tables = self.parse_tables(self.document)
         processed_tables = [row for table in list(self.process_changes_tables(tables)) for row in table]
         changes = list(filter(lambda row: row is not None, processed_tables))
-        return changes
-
-    def parse_by_date(self, received_date: str) -> List[Change]:
-        changes = self.parse()
-        date = datetime.strptime(received_date, '%Y-%m-%d')
-        for change in changes:
-            print(f"Received date: {date.strftime('%Y-%m-%d')}, change date: {change.date.strftime('%Y-%m-%d')}")
-        changes = list(filter(lambda change: change.date.strftime('%Y-%m-%d') == date.strftime('%Y-%m-%d'), changes))
         return changes
 
     def process_changes_tables(self, tables: ResultSet) -> List[List[Change]]:
@@ -47,8 +36,10 @@ class ChangesParserClient(BaseParserClient):
         group = cells[ChangeCell.Group.value].text
         lessons = cells[ChangeCell.Lessons.value].text
         teacher = cells[ChangeCell.Teacher.value].text
-        change = Change(date=date, group=group,
-                        lessons=lessons, teacher=teacher)
+        change = Change(date=date,
+                        group=group,
+                        lessons=lessons,
+                        teacher=teacher)
         status_trigger_cell = cells[ChangeCell.Room.value].text
         change.assign_status(status_trigger_cell)
         return change
