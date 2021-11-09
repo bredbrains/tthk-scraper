@@ -4,7 +4,6 @@ from typing import List
 from tthk_scraper.clients.base_cached_client import BaseCachedClient
 from tthk_scraper.clients.browser_client import BrowserClient
 from tthk_scraper.clients.database.changes_database_client import ChangesDatabaseClient
-from tthk_scraper.clients.database.updates_database_client import UpdatesDatabaseClient
 from tthk_scraper.clients.parsers.changes_parser_client import ChangesParserClient
 from tthk_scraper.models.change import Change
 from tthk_scraper.utils.blueprints import CHANGES
