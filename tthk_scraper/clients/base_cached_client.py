@@ -4,8 +4,8 @@ from typing import Type
 from sqlmodel import SQLModel
 
 from tthk_scraper.clients.browser_client import BrowserClient
-from tthk_scraper.clients.database import BaseDatabaseClient
-from tthk_scraper.clients.database.updates_database_client import UpdatesDatabaseClient
+from tthk_scraper.services import BaseService
+from tthk_scraper.services.update_service import UpdateService
 from tthk_scraper.clients.parsers.base_parser_client import BaseParserClient
 from tthk_scraper.utils.api_globals import DEPRECATION_TIME
 
@@ -14,12 +14,12 @@ class BaseCachedClient:
     def __init__(self, model: Type[SQLModel],
                  url: str,
                  parser_client: BaseParserClient,
-                 database_client: BaseDatabaseClient):
+                 database_client: BaseService):
         self.model = model
         self.url = url
         self.database_client = database_client
         self.parser_client = parser_client
-        self.updates_database_client = UpdatesDatabaseClient()
+        self.updates_database_client = UpdateService()
 
     def get(self):
         data = self.database_client.get_all()

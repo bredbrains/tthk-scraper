@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, List
 
-from bs4 import ResultSet, BeautifulSoup
+from bs4.element import ResultSet
 
 from tthk_scraper.clients.parsers.base_parser_client import BaseParserClient
 from tthk_scraper.models.change import Change

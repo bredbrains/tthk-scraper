@@ -2,11 +2,11 @@ from datetime import datetime
 
 from sqlmodel import select
 
-from tthk_scraper.clients.database import BaseDatabaseClient
+from tthk_scraper.services import BaseService
 from tthk_scraper.models.update_time import UpdateTime
 
 
-class UpdatesDatabaseClient(BaseDatabaseClient):
+class UpdateService(BaseService):
     def __init__(self):
         super().__init__(UpdateTime)
 

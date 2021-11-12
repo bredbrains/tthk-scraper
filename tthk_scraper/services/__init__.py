@@ -5,7 +5,7 @@ from sqlmodel import SQLModel, select
 from tthk_scraper.database import get_session
 
 
-class BaseDatabaseClient:
+class BaseService:
     def __init__(self, model: Type[SQLModel]):
         self.session = get_session()
         self.model = model
