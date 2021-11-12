@@ -14,15 +14,15 @@ class BaseCachedClient:
     def __init__(self, model: Type[SQLModel],
                  url: str,
                  parser_client: BaseParserClient,
-                 database_client: BaseService):
+                 service: BaseService):
         self.model = model
         self.url = url
-        self.database_client = database_client
+        self.service = service
         self.parser_client = parser_client
         self.updates_database_client = UpdateService()
 
     def get(self):
-        data = self.database_client.get_all()
+        data = self.service.get_all()
         is_deprecated = self.is_deprecated()
         if len(data) == 0 or is_deprecated:
             return self.get_new(is_deprecated)
@@ -32,7 +32,7 @@ class BaseCachedClient:
         document = BrowserClient(self.url).open_page()
         data = self.parser_client.parse(document)
         self.updates_database_client.save(self.model.__tablename__)
-        self.database_client.update(data) if is_deprecated else self.database_client.save(data)
+        self.service.update(data) if is_deprecated else self.service.save(data)
         return data
 
     def is_deprecated(self):
@@ -45,4 +45,4 @@ class BaseCachedClient:
         return update_diff.total_seconds() / 3600 > DEPRECATION_TIME[table]
 
     def save(self, models):
-        self.database_client.save(models)
+        self.service.save(models)
