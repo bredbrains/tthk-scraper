@@ -7,7 +7,6 @@ from tthk_scraper.clients.browser_client import BrowserClient
 from tthk_scraper.clients.database import BaseDatabaseClient
 from tthk_scraper.clients.database.updates_database_client import UpdatesDatabaseClient
 from tthk_scraper.clients.parsers.base_parser_client import BaseParserClient
-from tthk_scraper.models.change import Change
 from tthk_scraper.utils.api_globals import DEPRECATION_TIME
 
 
