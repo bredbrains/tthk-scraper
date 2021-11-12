@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Type, List
 
 from sqlmodel import SQLModel, select
 

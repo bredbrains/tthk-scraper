@@ -1,3 +1,5 @@
+from abc import abstractmethod
+
 import requests
 
 from bs4 import BeautifulSoup
@@ -9,6 +11,10 @@ TABLE_CELL_SELECTOR = 'td'
 
 
 class BaseParserClient:
+    @abstractmethod
+    def parse(self, document):
+        pass
+
     @staticmethod
     def parse_tables(document: BeautifulSoup) -> ResultSet:
         return document.findChildren(TABLE_SELECTOR)

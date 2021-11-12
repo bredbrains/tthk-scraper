@@ -12,28 +12,12 @@ from tthk_scraper.utils.urls import URLS
 
 class ChangesClient(BaseCachedClient):
     def __init__(self):
-        super().__init__(Change, ChangesDatabaseClient())
-        self.url = URLS[CHANGES]
+        super().__init__(Change, URLS[CHANGES], ChangesParserClient(), ChangesDatabaseClient())
 
-    def get_changes(self) -> List[Change]:
-        changes = self.database_client.get_all()
-        is_deprecated = self.is_deprecated()
-        if len(changes) == 0 or is_deprecated:
-            return self.get_new_changes(is_deprecated)
-        return changes
-
-    def get_changes_by_date(self, received_date: str) -> List[Change]:
-        changes = self.get_changes()
+    def get_by_date(self, received_date: str) -> List[Change]:
+        changes = self.get()
         date = datetime.strptime(received_date, '%Y-%m-%d')
         return ChangesClient.filter_changes_by_date(changes, date)
-
-    def get_new_changes(self, is_deprecated: bool = False):
-        document = BrowserClient(self.url).open_page()
-        changes = ChangesParserClient(document).parse()
-        table = Change.__tablename__
-        self.updates_database_client.save_update_time(table)
-        self.database_client.update(changes) if is_deprecated else self.database_client.save(changes)
-        return changes
 
     @staticmethod
     def filter_changes_by_date(changes: List[Change], date: datetime) -> List[Change]:

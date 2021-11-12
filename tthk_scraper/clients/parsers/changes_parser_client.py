@@ -9,11 +9,8 @@ from tthk_scraper.utils.blueprints import ChangeCell
 
 
 class ChangesParserClient(BaseParserClient):
-    def __init__(self, document: BeautifulSoup):
-        self.document = document
-
-    def parse(self) -> List[Change]:
-        tables = self.parse_tables(self.document)
+    def parse(self, document) -> List[Change]:
+        tables = self.parse_tables(document)
         processed_tables = [row for table in list(self.process_changes_tables(tables)) for row in table]
         changes = list(filter(lambda row: row is not None, processed_tables))
         return changes
@@ -30,7 +27,7 @@ class ChangesParserClient(BaseParserClient):
 
     def process_changes_cells(self, row: ResultSet) -> Optional[Change]:
         cells = self.parse_table_cells(row)
-        if not ChangesParserClient._validate_change_row(cells):
+        if not self.validate(cells):
             return None
         date = datetime.strptime(cells[ChangeCell.Date.value].text, '%d.%m.%Y')
         group = cells[ChangeCell.Group.value].text
@@ -45,5 +42,5 @@ class ChangesParserClient(BaseParserClient):
         return change
 
     @staticmethod
-    def _validate_change_row(cells):
+    def validate(cells):
         return len(cells) != 0 and cells[ChangeCell.Date.value].text != "Kuupäev"

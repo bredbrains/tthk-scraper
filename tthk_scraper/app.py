@@ -22,9 +22,9 @@ async def redirect_to_school_page():
 
 @app.get('/changes', response_model=List[Change], response_model_exclude_none=True)
 async def parse_changes():
-    return ChangesClient().get_changes()
+    return ChangesClient().get()
 
 
 @app.get('/changes/{date}', response_model=List[Change], response_model_exclude_none=True)
 async def parse_changes_by_date(date: str):
-    return ChangesClient().get_changes_by_date(date)
+    return ChangesClient().get_by_date(date)
