@@ -18,9 +18,7 @@ class Group:
     def determine_language_by_code(code) -> Language:
         is_estonian = Group.get_language_trigger_position(code, ESTONIAN_CODE_TRIGGER)
         is_russian = Group.get_language_trigger_position(code, RUSSIAN_CODE_TRIGGER)
-        if is_russian > is_estonian:
-            return Language.Russian
-        return Language.Estonian
+        return Language.Russian if is_russian > is_estonian else Language.Estonian
 
     @staticmethod
     def get_language_trigger_position(code, trigger) -> int:
