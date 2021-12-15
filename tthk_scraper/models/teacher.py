@@ -1,16 +1,15 @@
-from typing import List
+from typing import List, Any
 
-from tthk_scraper.models.consultation import Consultation
+from sqlmodel import SQLModel
+
+from tthk_scraper.models.department import Consultation
 from tthk_scraper.models.department import Department
 
 
-class Teacher:
-    def __init__(self,
-                 name: str,
-                 room: str,
-                 email: str,
-                 department: Department,
-                 times: List[Consultation]):
+class Teacher(SQLModel):
+    def __init__(self, name: str, room: str, email: str, department: Department, times: List[Consultation],
+                 **data: Any):
+        super().__init__(**data)
         if times is None:
             times = []
         self.name = name

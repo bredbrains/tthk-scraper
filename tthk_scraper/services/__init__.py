@@ -7,8 +7,8 @@ from tthk_scraper.database import get_session
 
 class BaseService:
     def __init__(self, model: Type[SQLModel]):
-        self.session = get_session()
         self.model = model
+        self.session = get_session()
         self.table = self.model.__tablename__
 
     def get_all(self):
@@ -28,8 +28,9 @@ class BaseService:
             self.session.delete(change)
         self.session.commit()
 
-    def update(self, models):
-        self.clear()
+    def update(self, models, is_first: bool = False):
+        if is_first:
+            self.clear()
         self.restore_autoincrement()
         self.save(models)
         self.session.close()

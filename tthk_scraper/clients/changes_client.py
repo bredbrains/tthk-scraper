@@ -1,17 +1,17 @@
 from datetime import datetime
 from typing import List
 
-from tthk_scraper.clients.base_cached_client import BaseCachedClient
-from tthk_scraper.services.change_service import ChangeService
+from tthk_scraper.clients.base_singular_cached_client import BaseSingularCachedClient
 from tthk_scraper.clients.parsers.changes_parser_client import ChangesParserClient
 from tthk_scraper.models.change import Change
+from tthk_scraper.services.change_service import ChangeService
 from tthk_scraper.utils.blueprints import CHANGES
 from tthk_scraper.utils.urls import URLS
 
 
-class ChangesClient(BaseCachedClient):
+class ChangesClient(BaseSingularCachedClient):
     def __init__(self):
-        super().__init__(Change, URLS[CHANGES], ChangesParserClient(), ChangeService())
+        super().__init__(Change, ChangesParserClient(), ChangeService(), URLS[CHANGES])
 
     def get_by_date(self, received_date: str) -> List[Change]:
         changes = self.get()

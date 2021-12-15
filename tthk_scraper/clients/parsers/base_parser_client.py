@@ -1,4 +1,4 @@
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
@@ -8,7 +8,7 @@ TABLE_ROW_SELECTOR = 'tr'
 TABLE_CELL_SELECTOR = 'td'
 
 
-class BaseParserClient:
+class BaseParserClient(ABC):
     @abstractmethod
     def parse(self, document):
         pass

@@ -1,5 +1,6 @@
+from abc import ABC
 from datetime import datetime
-from typing import Type
+from typing import Type, List
 
 from sqlmodel import SQLModel
 
@@ -10,14 +11,14 @@ from tthk_scraper.services.update_service import UpdateService
 from tthk_scraper.utils.api_globals import DEPRECATION_TIME
 
 
-# TODO: Extend to parse multiple URLs in case of consultations and teachers
-class BaseCachedClient:
-    def __init__(self, model: Type[SQLModel],
-                 url: str,
+class BaseCachedClient(ABC):
+    def __init__(self,
+                 model: Type[SQLModel],
                  parser_client: BaseParserClient,
-                 service: BaseService):
+                 service: BaseService,
+                 urls: List[str]):
         self.model = model
-        self.url = url
+        self.urls = urls
         self.service = service
         self.parser_client = parser_client
         self.updates_database_client = UpdateService()
@@ -30,14 +31,19 @@ class BaseCachedClient:
         data = self.service.get_all()
         is_deprecated = self.is_deprecated()
         if len(data) == 0 or is_deprecated:
-            return self.get_new(is_deprecated)
+            data = []
+            for index, url in enumerate(self.urls):
+                is_first = index == 0
+                data += self.fetch_remote_data(url, is_deprecated, is_first)
+            return data
         return data
 
-    def get_new(self, is_deprecated: bool = False):
-        document = BrowserClient(self.url).open_page()
+    def fetch_remote_data(self, url: str, is_deprecated: bool = False, is_first: bool = False):
+        document = BrowserClient(url).open_page()
         data = self.parser_client.parse(document)
-        self.updates_database_client.save(self.tablename)
-        self.service.update(data) if is_deprecated else self.service.save(data)
+        if is_first:
+            self.updates_database_client.save(self.tablename)
+        self.service.update(data, is_first) if is_deprecated else self.service.save(data)
         return data
 
     def is_deprecated(self):
